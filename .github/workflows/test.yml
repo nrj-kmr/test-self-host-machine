@@ -1,0 +1,22 @@
+name: EC2 Self Hosted Test
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-on-our-ec2:
+    # Kyuki aapka runner 'self-hosted' aur 'Linux' label ke sath save hua hai:
+    runs-on: [self-hosted, Linux]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Execute Script on EC2
+        run: |
+          echo "Success! This command is running live on our AWS EC2 instance."
+          echo "Current Path inside EC2:"
+          pwd
+          echo "EC2 OS Version:"
+          cat /etc/os-release | grep PRETTY_NAME
