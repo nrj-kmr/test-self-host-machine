@@ -33,6 +33,11 @@ jobs:
           lfs: true
           fetch-depth: 1
 
+      - name: Ensure Git LFS model is materialized
+        run: |
+          git lfs pull
+          file model.pth
+
       - name: Check Python Version
         run: python3 --version
 
