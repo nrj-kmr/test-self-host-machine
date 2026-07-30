@@ -35,7 +35,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip3 install torch onnx
+          python3 -m pip install --break-system-packages --upgrade pip
+          python3 -m pip install --break-system-packages -r requirements.txt
 
       - name: Convert PyTorch to ONNX
         run: |
