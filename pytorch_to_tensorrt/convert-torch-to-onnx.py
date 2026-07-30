@@ -25,7 +25,7 @@ ONNX_OUTPUT = "model.onnx"
 model = MyModel()
 
 # Load weights
-checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu")
+checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu", weights_only=False)
 
 # If checkpoint contains state_dict
 if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
