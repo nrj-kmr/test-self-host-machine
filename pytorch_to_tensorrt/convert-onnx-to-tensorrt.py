@@ -13,9 +13,12 @@ LOGGER = trt.Logger(trt.Logger.INFO)
 # Build TensorRT Engine
 # ======================================================
 builder = trt.Builder(LOGGER)
-network = builder.create_network(
-    1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
-)
+if hasattr(trt, "NetworkDefinitionCreationFlag") and hasattr(trt.NetworkDefinitionCreationFlag, "EXPLICIT_BATCH"):
+    network_flags = 1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH)
+    network = builder.create_network(network_flags)
+else:
+    # Newer TensorRT versions
+    network = builder.create_network(0)
 
 parser = trt.OnnxParser(network, LOGGER)
 
