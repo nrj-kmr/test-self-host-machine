@@ -29,6 +29,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
 
       - name: Check Python Version
         run: python3 --version
@@ -63,6 +66,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 1
 
       - name: Download ONNX Model
         uses: actions/download-artifact@v4
