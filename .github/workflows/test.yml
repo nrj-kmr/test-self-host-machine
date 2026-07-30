@@ -60,7 +60,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: model-onnx
-          path: pytorch_to_tensorrt/model.onnx
+          path: |
+            pytorch_to_tensorrt/model.onnx
+            pytorch_to_tensorrt/model.onnx.data
 
   convert-to-engine:
     name: Convert ONNX to TensorRT
@@ -100,7 +102,10 @@ jobs:
           path: pytorch_to_tensorrt
 
       - name: Verify Files
-        run: ls -lh
+        run: |
+          ls -lh
+          test -f model.onnx
+          test -f model.onnx.data
 
       - name: Convert ONNX to TensorRT Engine
         run: |
