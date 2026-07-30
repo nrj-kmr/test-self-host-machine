@@ -42,8 +42,10 @@ config.set_memory_pool_limit(
 )
 
 # Enable FP16 if supported
-if builder.platform_has_fast_fp16:
-    print("FP16 supported -> enabling FP16")
+# if builder.platform_has_fast_fp16:
+#     print("FP16 supported -> enabling FP16")
+#     config.set_flag(trt.BuilderFlag.FP16)
+if hasattr(builder, "platform_has_fast_fp16") and builder.platform_has_fast_fp16:
     config.set_flag(trt.BuilderFlag.FP16)
 
 # Create optimization profile (required if model has dynamic shapes)
