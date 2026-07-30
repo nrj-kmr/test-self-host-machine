@@ -1,5 +1,6 @@
 import torch
 import onnx
+import os
 
 # ============================================================
 # CHANGE THIS: Import your model
@@ -23,6 +24,13 @@ ONNX_OUTPUT = "model.onnx"
 # CHANGE THIS: Create your model
 # ============================================================
 model = MyModel()
+
+print("Checkpoint:", os.path.abspath(CHECKPOINT_PATH))
+print("Exists:", os.path.exists(CHECKPOINT_PATH))
+print("Size:", os.path.getsize(CHECKPOINT_PATH))
+
+with open(CHECKPOINT_PATH, "rb") as f:
+    print("First 100 bytes:", f.read(100))
 
 # Load weights
 checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu", weights_only=False)
