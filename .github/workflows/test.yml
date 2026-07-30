@@ -1,22 +1,83 @@
-name: EC2 Self Hosted Test
+name: Model Conversion Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      # - model-covert      # Change if your branch name is different
+
+  workflow_dispatch:
+    inputs:
+      build_engine:
+        description: "Build TensorRT Engine?"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
-  test-on-our-ec2:
-    # Kyuki aapka runner 'self-hosted' aur 'Linux' label ke sath save hua hai:
+  convert-to-onnx:
+    name: Convert PyTorch to ONNX
     runs-on: [self-hosted, Linux]
 
+    defaults:
+      run:
+        working-directory: pytorch_to_tensorrt
+
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Execute Script on EC2
+      - name: Check Python Version
+        run: python3 --version
+
+      - name: Install Dependencies
         run: |
-          echo "Success! This command is running live on our AWS EC2 instance."
-          echo "Current Path inside EC2:"
-          pwd
-          echo "EC2 OS Version:"
-          cat /etc/os-release | grep PRETTY_NAME
+          pip3 install torch onnx
+
+      - name: Convert PyTorch to ONNX
+        run: |
+          python3 convert-torch-to-onnx.py
+
+      - name: Upload ONNX Model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-onnx
+          path: pytorch_to_tensorrt/model.onnx
+
+  convert-to-engine:
+    name: Convert ONNX to TensorRT
+    needs: convert-to-onnx
+
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_engine == 'true'
+
+    runs-on: self-hosted
+
+    defaults:
+      run:
+        working-directory: pytorch_to_tensorrt
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download ONNX Model
+        uses: actions/download-artifact@v4
+        with:
+          name: model-onnx
+          path: pytorch_to_tensorrt
+
+      - name: Verify Files
+        run: ls -lh
+
+      - name: Convert ONNX to TensorRT Engine
+        run: |
+          python3 convert-onnx-to-tensorrt.py
+
+      - name: Upload TensorRT Engine
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-engine
+          path: pytorch_to_tensorrt/model.engine
