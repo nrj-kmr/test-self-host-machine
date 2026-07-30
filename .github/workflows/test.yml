@@ -93,7 +93,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: model-conversion.yml   
+          workflow: test.yml   
           workflow_conclusion: success
           branch: main                     
           name: model-onnx
